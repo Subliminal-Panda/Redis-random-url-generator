@@ -1,10 +1,13 @@
 ﻿import React, { useState, useEffect } from 'react';
+import AddUrl from './addUrl';
+import Url from './url';
 
 export default function Home(props) {
 
     const {  } = props;
 
     const [ allUrlKeys, setAllUrlKeys ] = useState([])
+    const [ submitted, setSubmitted ] = useState([])
     const [ formattedUrlKeys, setFormattedUrlKeys ] = useState([])
 
     const getAllUrlKeys = () => {
@@ -21,32 +24,33 @@ export default function Home(props) {
         ).catch(err => console.log("Error deleting key:", err));
     }
 
+    const handleSubmitReload = () => {
+        setSubmitted(true);
+    }
+
     useEffect(() => {
         getAllUrlKeys();
-        separateUrlKeys(allUrlKeys);
-    },[])
+        separateUrlKeys();
+        setSubmitted(false);
+    },[submitted])
 
     useEffect(() => {
-        separateUrlKeys(allUrlKeys);
+        separateUrlKeys();
     },[allUrlKeys])
 
-    const separateUrlKeys = (keys) => {
-        const formattedKeys = []
-        keys.forEach((k) => {
-            formattedKeys.push(
-            <div key={k}>
-                Key: {k}
-                <button onClick={() => deleteKey(k)}>Delete Key?</button>
+    const separateUrlKeys = () => {
+        return allUrlKeys.map(key => {
+            return(<div className="url-keys-wrap" key={key}>
+                Short URL: <Url url={key} />
+                <button onClick={() => deleteKey(key)}>Delete URL key?</button>
             </div>
-            )
-        })
-        setFormattedUrlKeys(formattedKeys)
+        )})
     }
 
     return (
         <div className="home">
-            <h1>Home Page Component</h1>
-            <h2>URL keys: {formattedUrlKeys}</h2>
+            <div className="add-url-container"><AddUrl handleSubmitReload={handleSubmitReload} /></div>
+            <h2>URL keys: {separateUrlKeys()}</h2>
         </div>
     )
 }
