@@ -14,10 +14,18 @@ export default function Home(props) {
         ).catch(err => console.log("Error with getting keys/url's.", err));
     }
 
+    const deleteKey = (key) => {
+        fetch(`http://127.0.0.1:5000/url/delete/${key}`,  { method: "DELETE" }
+        ).then(res => res.json()
+        ).then(resData => console.log(resData)
+        ).catch(err => console.log("Error deleting key:", err));
+    }
+
     useEffect(() => {
         getAllUrlKeys();
         separateUrlKeys(allUrlKeys);
     },[])
+
     useEffect(() => {
         separateUrlKeys(allUrlKeys);
     },[allUrlKeys])
@@ -26,8 +34,9 @@ export default function Home(props) {
         const formattedKeys = []
         keys.forEach((k) => {
             formattedKeys.push(
-            <div>
+            <div key={k}>
                 Key: {k}
+                <button onClick={() => deleteKey(k)}>Delete Key?</button>
             </div>
             )
         })
